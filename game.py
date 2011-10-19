@@ -1,9 +1,13 @@
-import pygame
+import random
 import sys
+import pygame
 from pygame.locals import *
 
 import shipSprite
 from shipSprite import ShipSprite
+
+import badGuySprite
+from badGuySprite import BadGuySprite
 
 # setup the game
 pygame.init()
@@ -20,10 +24,23 @@ background.fill((250, 250, 250))
 gameSurface.blit(background, (0, 0))
 pygame.display.flip()
 
-# setup the sprites
+# setup the ship
 ship = ShipSprite(gameSurface)
 ship.rect = ship.rect.move(0, gameSurface.get_height()-ship.rect.height)
-allsprites = pygame.sprite.RenderPlain((ship,))
+sprites = [ship,]
+
+# setup the baddies
+numBaddies = 2
+baddies = []
+for baddie in range(numBaddies):
+    badGuy = BadGuySprite(gameSurface)
+    #badGuy.rect = ship.rect.move(
+    #        random.randint(0, gameSurface.get_width()),
+    #        random.randint(ship.rect.height - 20, gameSurface.get_height()))
+    baddies.append(badGuy)
+    sprites.append(badGuy)
+
+allsprites = pygame.sprite.RenderPlain(sprites)
 
 # game loop
 while True:
@@ -38,5 +55,7 @@ while True:
     # update UI
     gameSurface.blit(background, (0, 0))
     ship.update()
+    for baddie in baddies:
+        baddie.update()
     allsprites.draw(gameSurface)
     pygame.display.flip()

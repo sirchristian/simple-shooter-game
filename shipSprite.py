@@ -37,6 +37,8 @@ class ShipSprite(pygame.sprite.Sprite):
         self.lastFire = now
 
     def update(self):
+        """ Handles the update call.
+            - Moves bullets """
         for bullet,bullet_rect in self.bullets[:]:
             if bullet_rect.bottom <= 0:
                 self.bullets.remove((bullet, bullet_rect))
