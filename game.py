@@ -21,7 +21,7 @@ gameSurface.blit(background, (0, 0))
 pygame.display.flip()
 
 # setup the sprites
-ship = ShipSprite(background)
+ship = ShipSprite(gameSurface)
 ship.rect = ship.rect.move(0, gameSurface.get_height()-ship.rect.height)
 allsprites = pygame.sprite.RenderPlain((ship,))
 
@@ -39,4 +39,4 @@ while True:
     gameSurface.blit(background, (0, 0))
     ship.update()
     allsprites.draw(gameSurface)
-    pygame.display.update()
+    pygame.display.flip()

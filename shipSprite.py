@@ -30,15 +30,13 @@ class ShipSprite(pygame.sprite.Sprite):
 
     def _fire(self, now):
         """ Fires a bullet """
-        bullet = pygame.draw.circle(
-                     self.surface,
-                     (255, 0, 0), 
-                     (self.rect.left + int(self.rect.width/2), self.rect.top),
-                     4,
-                     0)
-        self.bullets.append(bullet)
+        bullet = pygame.image.load('bullet.png')
+        bullet_rect = bullet.get_rect()
+        bullet_rect = bullet_rect.move(self.rect.centerx, self.rect.top)
+        self.bullets.append((bullet, bullet_rect))
         self.lastFire = now
 
     def update(self):
-        for bullet in self.bullets:
-            bullet.move_ip(0, 1)
+        for bullet,bullet_rect in self.bullets:
+            bullet_rect.move_ip(0, -1)
+            self.surface.blit(bullet, bullet_rect)
