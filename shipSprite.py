@@ -37,6 +37,9 @@ class ShipSprite(pygame.sprite.Sprite):
         self.lastFire = now
 
     def update(self):
-        for bullet,bullet_rect in self.bullets:
+        for bullet,bullet_rect in self.bullets[:]:
+            if bullet_rect.bottom <= 0:
+                self.bullets.remove((bullet, bullet_rect))
+                continue
             bullet_rect.move_ip(0, -1)
             self.surface.blit(bullet, bullet_rect)
