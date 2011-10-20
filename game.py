@@ -29,16 +29,19 @@ ship = ShipSprite(gameSurface)
 ship.rect = ship.rect.move(0, gameSurface.get_height()-ship.rect.height)
 sprites = [ship,]
 
+def CreateBadGuy():
+    badGuy = BadGuySprite(gameSurface)
+    badGuy.rect = badGuy.rect.move(
+        random.randint(0, gameSurface.get_width()),
+        random.randint(20, gameSurface.get_height()))
+    baddies.append(badGuy)
+    sprites.append(badGuy)
+        
 # setup the baddies
 numBaddies = 2
 baddies = []
 for baddie in range(numBaddies):
-    badGuy = BadGuySprite(gameSurface)
-    #badGuy.rect = ship.rect.move(
-    #        random.randint(0, gameSurface.get_width()),
-    #        random.randint(ship.rect.height - 20, gameSurface.get_height()))
-    baddies.append(badGuy)
-    sprites.append(badGuy)
+    CreateBadGuy()
 
 allsprites = pygame.sprite.RenderPlain(sprites)
 
@@ -55,7 +58,10 @@ while True:
     # update UI
     gameSurface.blit(background, (0, 0))
     ship.update()
-    for baddie in baddies:
-        baddie.update()
+    for baddie in baddies[:]:
+        if baddie.update() == False:
+            baddies.remove(baddie)
+            CreateBadGuy()
+            allsprites = pygame.sprite.RenderPlain(sprites)
     allsprites.draw(gameSurface)
     pygame.display.flip()
