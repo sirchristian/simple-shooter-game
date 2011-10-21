@@ -1,6 +1,7 @@
 import random
 import sys
 import pygame
+import pygame._view # needed to turn to an exe
 from pygame.locals import *
 
 import shipSprite
@@ -37,8 +38,8 @@ def DisplayEndGame(lost):
     endPage = pygame.Surface(gameSurface.get_size())
     endPage = endPage.convert()
     endPage.fill((150, 150, 150))
-    font = pygame.font.Font(None, 36)
-    text = font.render('GameOver', 1, (10, 10, 10))
+    font = pygame.font.SysFont('Comic Sans MS', 36)
+    text = font.render('Game Over', 1, (10, 10, 10))
     textpos = text.get_rect(centerx=welcomePage.get_width()/2, centery = 20)
     if lost:
         text2 = font.render('Bad guys got you 5 times', 1, (10, 10, 10))
@@ -46,8 +47,11 @@ def DisplayEndGame(lost):
         text2 = font.render('You won!!!', 1, (10, 10, 10))\
                 
     textpos2 = text2.get_rect(centerx=welcomePage.get_width()/2, centery = 60)
+    #text3 = font.render('Press \'r\' to replay', 1, (10, 10, 10))
+    #textpos3 = text3.get_rect(centerx=welcomePage.get_width()/2, centery = 120)
     endPage.blit(text, textpos)
     endPage.blit(text2, textpos2)
+    #endPage.blit(text3, textpos3)
     gameSurface.blit(endPage, (0, 0))
     pygame.display.flip()
     
@@ -61,7 +65,7 @@ pygame.key.set_repeat(1, 1)
 welcomePage = pygame.Surface(gameSurface.get_size())
 welcomePage = welcomePage.convert()
 welcomePage.fill((150, 150, 150))
-font = pygame.font.Font(None, 36)
+font = pygame.font.SysFont('Comic Sans MS', 36)
 text = font.render('Silly shooter type game.  Use space to shoot, arrows to move', 1, (10, 10, 10))
 textpos = text.get_rect(centerx=welcomePage.get_width()/2, centery = 20)
 text2 = font.render('Press space to begin', 1, (10, 10, 10))
@@ -141,15 +145,13 @@ while not gameOver:
     allsprites.draw(gameSurface)
     pygame.display.flip()
 
-    print(len(baddies))
-    
     # see if we are at an end state
-    if numLivesLeft == 0:
-        gameOver = True
-        DisplayEndGame(True)
-    elif len(baddies) == 0:
+    if len(baddies) == 0:
         gameOver = True
         DisplayEndGame(False)
+    elif numLivesLeft == 0:
+        gameOver = True
+        DisplayEndGame(True)
 
 # disable key repeat
 pygame.key.set_repeat()
