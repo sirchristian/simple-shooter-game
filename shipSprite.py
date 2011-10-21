@@ -3,6 +3,8 @@ import datetime
 from pygame.locals import *
 
 class ShipSprite(pygame.sprite.Sprite):
+
+    bullets = []
     
     def __init__(self, gameSurface):
         """ Init the Ship Sprite """
@@ -12,8 +14,8 @@ class ShipSprite(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.surface = gameSurface
         self.gameRect = self.surface.get_rect()
-        self.bullets = []
         self.lastFire = datetime.datetime.now()
+        self.dead = False
 
     def keypress(self, key):
         """ Handles the keypress events """
@@ -45,3 +47,7 @@ class ShipSprite(pygame.sprite.Sprite):
                 continue
             bullet_rect.move_ip(0, -1)
             self.surface.blit(bullet, bullet_rect)
+
+    def kill(self):
+        pygame.sprite.Sprite.kill(self)
+        self.dead = True

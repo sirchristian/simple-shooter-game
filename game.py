@@ -9,12 +9,79 @@ from shipSprite import ShipSprite
 import badGuySprite
 from badGuySprite import BadGuySprite
 
+def CreateBadGuy():
+    badGuy = BadGuySprite(gameSurface)
+    badGuy.rect = badGuy.rect.move(
+        random.randint(0, gameSurface.get_width()),
+        random.randint(20, gameSurface.get_height()))
+    baddies.append(badGuy)
+    sprites.append(badGuy)
+
+def doRectsOverlap(rect1, rect2):
+    for a, b in [(rect1, rect2), (rect2, rect1)]:
+        # Check if a's corners are inside b
+        if ((isPointInsideRect(a.left, a.top, b)) or
+            (isPointInsideRect(a.left, a.bottom, b)) or
+            (isPointInsideRect(a.right, a.top, b)) or
+            (isPointInsideRect(a.right, a.bottom, b))):
+            return True
+    return False
+
+def isPointInsideRect(x, y, rect):
+    if (x > rect.left) and (x < rect.right) and (y > rect.top) and (y < rect.bottom):
+        return True
+    else:
+        return False
+
+def DisplayEndGame(lost):
+    endPage = pygame.Surface(gameSurface.get_size())
+    endPage = endPage.convert()
+    endPage.fill((150, 150, 150))
+    font = pygame.font.Font(None, 36)
+    text = font.render('GameOver', 1, (10, 10, 10))
+    textpos = text.get_rect(centerx=welcomePage.get_width()/2, centery = 20)
+    if lost:
+        text2 = font.render('Bad guys got you 5 times', 1, (10, 10, 10))
+    else:
+        text2 = font.render('You won!!!', 1, (10, 10, 10))\
+                
+    textpos2 = text2.get_rect(centerx=welcomePage.get_width()/2, centery = 60)
+    endPage.blit(text, textpos)
+    endPage.blit(text2, textpos2)
+    gameSurface.blit(endPage, (0, 0))
+    pygame.display.flip()
+    
 # setup the game
 pygame.init()
-gameSurface = pygame.display.set_mode((640,480))
+gameSurface = pygame.display.set_mode((1024,786))
 pygame.display.set_caption('Fun game')
 pygame.key.set_repeat(1, 1)
 
+#Create The Splash page
+welcomePage = pygame.Surface(gameSurface.get_size())
+welcomePage = welcomePage.convert()
+welcomePage.fill((150, 150, 150))
+font = pygame.font.Font(None, 36)
+text = font.render('Silly shooter type game.  Use space to shoot, arrows to move', 1, (10, 10, 10))
+textpos = text.get_rect(centerx=welcomePage.get_width()/2, centery = 20)
+text2 = font.render('Press space to begin', 1, (10, 10, 10))
+textpos2 = text2.get_rect(centerx=welcomePage.get_width()/2, centery = 60)
+welcomePage.blit(text, textpos)
+welcomePage.blit(text2, textpos2)
+gameSurface.blit(welcomePage, (0, 0))
+pygame.display.flip()
+
+# wait for the space to be pressed.
+startGame = False
+while not startGame:
+    # handle events
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+        elif event.type == KEYDOWN and event.key == K_SPACE:
+            startGame = True
+            
 #Create The Backgound
 background = pygame.Surface(gameSurface.get_size())
 background = background.convert()
@@ -29,24 +96,19 @@ ship = ShipSprite(gameSurface)
 ship.rect = ship.rect.move(0, gameSurface.get_height()-ship.rect.height)
 sprites = [ship,]
 
-def CreateBadGuy():
-    badGuy = BadGuySprite(gameSurface)
-    badGuy.rect = badGuy.rect.move(
-        random.randint(0, gameSurface.get_width()),
-        random.randint(20, gameSurface.get_height()))
-    baddies.append(badGuy)
-    sprites.append(badGuy)
-        
 # setup the baddies
-numBaddies = 2
+numBaddies = 7
 baddies = []
 for baddie in range(numBaddies):
     CreateBadGuy()
 
 allsprites = pygame.sprite.RenderPlain(sprites)
 
+numLivesLeft = 5
+
 # game loop
-while True:
+gameOver = False
+while not gameOver:
     # handle events
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -63,5 +125,42 @@ while True:
             baddies.remove(baddie)
             CreateBadGuy()
             allsprites = pygame.sprite.RenderPlain(sprites)
+        if doRectsOverlap(ship.rect, baddie.rect):
+            ship.rect.move_ip(-ship.rect.left, 0)
+            # hack to stop the baddie and the ship from colliding
+            # more than once. I'm sure there is a better way
+            baddie.rect.move_ip(-1000, -1000)
+            baddies.remove(baddie)
+            numLivesLeft = numLivesLeft - 1
+        for b,bullet in ship.bullets:
+            if doRectsOverlap(baddie.rect, bullet):
+                baddie.kill()
+                sprites.remove(baddie)
+                baddies.remove(baddie)
+
     allsprites.draw(gameSurface)
     pygame.display.flip()
+
+    print(len(baddies))
+    
+    # see if we are at an end state
+    if numLivesLeft == 0:
+        gameOver = True
+        DisplayEndGame(True)
+    elif len(baddies) == 0:
+        gameOver = True
+        DisplayEndGame(False)
+
+# disable key repeat
+pygame.key.set_repeat()
+
+# wait for user to end the game
+while True:
+    # handle events
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+        elif event.type == KEYDOWN:
+            pygame.quit()
+            sys.exit()
