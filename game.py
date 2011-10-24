@@ -118,8 +118,9 @@ while not gameOver:
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
-        elif event.type == KEYDOWN:
-            ship.keypress(event.key)
+
+    # handle input
+    ship.handleKeyInput(pygame.key.get_pressed())
     
     # update UI
     gameSurface.blit(background, (0, 0))

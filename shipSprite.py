@@ -17,17 +17,17 @@ class ShipSprite(pygame.sprite.Sprite):
         self.lastFire = datetime.datetime.now()
         self.dead = False
 
-    def keypress(self, key):
+    def handleKeyInput(self, keys):
         """ Handles the keypress events """
         # we don't want all key events all the time so keep track
         # of the datetime.  
         now = datetime.datetime.now()
 
-        if key == K_LEFT and self.rect.left > self.gameRect.left:
+        if keys[K_LEFT] and self.rect.left > self.gameRect.left:
             self.rect.move_ip(-1, 0)
-        elif key == K_RIGHT and self.rect.right < self.gameRect.right:
+        if keys[K_RIGHT] and self.rect.right < self.gameRect.right:
             self.rect.move_ip(1, 0)
-        elif key == K_SPACE and (now - self.lastFire).total_seconds() >= 0.25:
+        if keys[K_SPACE] and (now - self.lastFire).total_seconds() >= 0.25:
             self._fire(now)
 
     def _fire(self, now):
