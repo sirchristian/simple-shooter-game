@@ -52,6 +52,21 @@ def renderTextOnPage(textFontTuples, surface, fontColor, initialy = 20):
                 centery = initialy)
         surface.blit(line, textpos)
 
+def renderLives(numLives, gameSurface):
+    # Print Lives:
+    font = pygame.font.SysFont(FONT, 14)
+    text = 'Lives:'
+    line = font.render(text, True, (20, 20, 220))
+    textpos = line.get_rect(left=0, top=0)
+    gameSurface.blit(line, textpos)
+    
+    # Render little ships
+    for i in range(numLives):
+        tinyShip = pygame.image.load('ship_small.png')
+        tinyShipRect = tinyShip.get_rect(left=textpos.right + 1 + (i * 28))
+        gameSurface.blit(tinyShip, tinyShipRect)
+
+
 def displayEndGame(lost, gameSurface):
     bigfont = pygame.font.SysFont(FONT, 128)
     smallfont = pygame.font.SysFont(FONT, 18)
@@ -131,7 +146,7 @@ def main(showWelcome):
     #Create The Backgound
     background = pygame.Surface(gameSurface.get_size())
     background = background.convert()
-    background.fill((250, 250, 250))
+    background.fill((255, 255, 255))
 
     #Display The Background
     gameSurface.blit(background, (0, 0))
@@ -168,6 +183,8 @@ def main(showWelcome):
         # update UI
         gameSurface.blit(background, (0, 0))
         ship.update()
+        renderLives(numLivesLeft, gameSurface)
+
         for baddie in baddies[:]:
             if baddie.update() == False:
                 # baddie is off the screen
@@ -210,6 +227,9 @@ def main(showWelcome):
         elif numLivesLeft == 0:
             gameOver = True
             displayEndGame(True, gameSurface)
+            topLeft = pygame.Surface((200, 30))
+            topLeft.fill((255, 255, 255))
+            gameSurface.blit(topLeft, (0,0))
 
         pygame.display.flip()
 
