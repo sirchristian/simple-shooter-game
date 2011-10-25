@@ -10,8 +10,10 @@ class BadGuySprite(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         badGuyImages = os.listdir('badguysprites')
         badGuyToUse = random.randint(1, len(badGuyImages))
+        while badGuyImages[badGuyToUse-1].find('svg') >= 0:
+            badGuyToUse = random.randint(1, len(badGuyImages))
         self.image = pygame.image.load(
-                os.path.join('badguysprites', badGuyImages[badGuyToUse-1]))
+            os.path.join('badguysprites', badGuyImages[badGuyToUse-1]))
         self.image.convert()
         self.rect = self.image.get_rect()
         self.surface = gameSurface
