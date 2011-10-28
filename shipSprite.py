@@ -27,7 +27,7 @@ class ShipSprite(pygame.sprite.Sprite):
             self.rect.move_ip(-1, 0)
         if keys[K_RIGHT] and self.rect.right < self.gameRect.right:
             self.rect.move_ip(1, 0)
-        if keys[K_SPACE] and (now - self.lastFire).total_seconds() >= 0.25:
+        if keys[K_SPACE] and (now - self.lastFire).total_seconds() >= 0.1:
             self._fire(now)
 
     def _fire(self, now):

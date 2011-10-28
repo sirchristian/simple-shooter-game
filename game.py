@@ -212,9 +212,11 @@ def main(showWelcome):
             for b,bullet in ship.bullets:
                 # see if any of the bullets hit
                 if doRectsOverlap(baddie.rect, bullet):
-                    # on a hit remove the baddie
-                    badGuySprites.remove(baddie)
-                    baddies.remove(baddie)
+                    # on a hit remove the baddie if they are still there
+                    if badGuySprites.__contains__(baddie):
+                        badGuySprites.remove(baddie)
+                    if baddies.__contains__(baddie):
+                        baddies.remove(baddie)
 
         # update the display
         badGuySprites.draw(gameSurface)
